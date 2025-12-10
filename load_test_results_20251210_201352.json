@@ -1,0 +1,69 @@
+{
+  "test_config": {
+    "num_issues": 10,
+    "concurrent": 2,
+    "api_url": "http://localhost:8000"
+  },
+  "summary": {
+    "total": 10,
+    "successful": 0,
+    "failed": 10,
+    "total_duration": 0.4882221221923828,
+    "throughput": 20.482480300348872,
+    "avg_response_time": 0,
+    "min_response_time": 0,
+    "max_response_time": 0
+  },
+  "results": [
+    {
+      "success": false,
+      "status_code": 307,
+      "duration": 0.00933074951171875
+    },
+    {
+      "success": false,
+      "status_code": 307,
+      "duration": 0.005003929138183594
+    },
+    {
+      "success": false,
+      "status_code": 307,
+      "duration": 0.002050161361694336
+    },
+    {
+      "success": false,
+      "status_code": 307,
+      "duration": 0.0020742416381835938
+    },
+    {
+      "success": false,
+      "status_code": 307,
+      "duration": 0.002633333206176758
+    },
+    {
+      "success": false,
+      "status_code": 307,
+      "duration": 0.0025110244750976562
+    },
+    {
+      "success": false,
+      "status_code": 307,
+      "duration": 0.0019860267639160156
+    },
+    {
+      "success": false,
+      "status_code": 307,
+      "duration": 0.0019452571868896484
+    },
+    {
+      "success": false,
+      "status_code": 307,
+      "duration": 0.01168513298034668
+    },
+    {
+      "success": false,
+      "status_code": 307,
+      "duration": 0.009791851043701172
+    }
+  ]
+}

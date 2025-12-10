@@ -1,0 +1,519 @@
+{
+  "test_config": {
+    "num_issues": 100,
+    "concurrent": 10,
+    "api_url": "http://localhost:8000"
+  },
+  "summary": {
+    "total": 100,
+    "successful": 100,
+    "failed": 0,
+    "total_duration": 1.350275993347168,
+    "throughput": 74.05893350152239,
+    "avg_response_time": 0.03097355842590332,
+    "min_response_time": 0.017415761947631836,
+    "max_response_time": 0.05389809608459473
+  },
+  "results": [
+    {
+      "success": true,
+      "issue_id": 1131504661124022273,
+      "duration": 0.050340890884399414
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661150728193,
+      "duration": 0.05389809608459473
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661149745153,
+      "duration": 0.0537869930267334
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661123596289,
+      "duration": 0.04615378379821777
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661152759809,
+      "duration": 0.049569129943847656
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661149646849,
+      "duration": 0.050814151763916016
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661150597121,
+      "duration": 0.052703142166137695
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661151481857,
+      "duration": 0.05223703384399414
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661149679617,
+      "duration": 0.05226421356201172
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661149712385,
+      "duration": 0.051783084869384766
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661566652417,
+      "duration": 0.030098915100097656
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661568880641,
+      "duration": 0.02959609031677246
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661645033473,
+      "duration": 0.0421600341796875
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661588934657,
+      "duration": 0.03420281410217285
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661575729153,
+      "duration": 0.032601118087768555
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661642543105,
+      "duration": 0.038836002349853516
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661645164545,
+      "duration": 0.04044485092163086
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661585461249,
+      "duration": 0.030889034271240234
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661642379265,
+      "duration": 0.04015469551086426
+    },
+    {
+      "success": true,
+      "issue_id": 1131504661651324929,
+      "duration": 0.03826904296875
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662035890177,
+      "duration": 0.02018117904663086
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662045917185,
+      "duration": 0.02152085304260254
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662090711041,
+      "duration": 0.03267788887023926
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662058139649,
+      "duration": 0.02536916732788086
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662048669697,
+      "duration": 0.0231778621673584
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662083010561,
+      "duration": 0.03137493133544922
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662081470465,
+      "duration": 0.030460119247436523
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662052536321,
+      "duration": 0.024281024932861328
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662081634305,
+      "duration": 0.0287628173828125
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662082256897,
+      "duration": 0.029166698455810547
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662479437825,
+      "duration": 0.01776885986328125
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662483992577,
+      "duration": 0.018150806427001953
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662536486913,
+      "duration": 0.0326080322265625
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662500278273,
+      "duration": 0.024125337600708008
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662491660289,
+      "duration": 0.02265191078186035
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662522855425,
+      "duration": 0.029249906539916992
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662531538945,
+      "duration": 0.029661893844604492
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662494642177,
+      "duration": 0.020949125289916992
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662531047425,
+      "duration": 0.030684947967529297
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662536683521,
+      "duration": 0.030775070190429688
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662924886017,
+      "duration": 0.02096390724182129
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662933143553,
+      "duration": 0.02435302734375
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662989012993,
+      "duration": 0.034195899963378906
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662949134337,
+      "duration": 0.026617050170898438
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662936485889,
+      "duration": 0.02372288703918457
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662984556545,
+      "duration": 0.030475854873657227
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662988128257,
+      "duration": 0.03132295608520508
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662942744577,
+      "duration": 0.02432107925415039
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662988161025,
+      "duration": 0.030633926391601562
+    },
+    {
+      "success": true,
+      "issue_id": 1131504662988226561,
+      "duration": 0.030998706817626953
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663369416705,
+      "duration": 0.017415761947631836
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663374561281,
+      "duration": 0.01970195770263672
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663424925697,
+      "duration": 0.03123784065246582
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663389306881,
+      "duration": 0.021850109100341797
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663379181569,
+      "duration": 0.022656679153442383
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663424630785,
+      "duration": 0.028683185577392578
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663424073729,
+      "duration": 0.03021693229675293
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663385079809,
+      "duration": 0.021189212799072266
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663422435329,
+      "duration": 0.02688002586364746
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663428005889,
+      "duration": 0.02799224853515625
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663814602753,
+      "duration": 0.01953291893005371
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663815356417,
+      "duration": 0.02238178253173828
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663876829185,
+      "duration": 0.03558778762817383
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663842390017,
+      "duration": 0.025393962860107422
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663824760833,
+      "duration": 0.02245306968688965
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663872143361,
+      "duration": 0.032137393951416016
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663877353473,
+      "duration": 0.03457212448120117
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663829643265,
+      "duration": 0.024499177932739258
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663876337665,
+      "duration": 0.03402113914489746
+    },
+    {
+      "success": true,
+      "issue_id": 1131504663876796417,
+      "duration": 0.03181576728820801
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664265719809,
+      "duration": 0.025359153747558594
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664269488129,
+      "duration": 0.031517982482910156
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664364777473,
+      "duration": 0.04583001136779785
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664325226497,
+      "duration": 0.03643989562988281
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664275353601,
+      "duration": 0.03146100044250488
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664362483713,
+      "duration": 0.04691290855407715
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664367661057,
+      "duration": 0.046156883239746094
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664285970433,
+      "duration": 0.03394579887390137
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664361566209,
+      "duration": 0.04561781883239746
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664362450945,
+      "duration": 0.04399824142456055
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664757567489,
+      "duration": 0.019602060317993164
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664761696257,
+      "duration": 0.019875049591064453
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664814944257,
+      "duration": 0.031229019165039062
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664782110721,
+      "duration": 0.024685144424438477
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664768708609,
+      "duration": 0.022438764572143555
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664813010945,
+      "duration": 0.03146505355834961
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664813109249,
+      "duration": 0.028975248336791992
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664777195521,
+      "duration": 0.02059197425842285
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664811831297,
+      "duration": 0.030106782913208008
+    },
+    {
+      "success": true,
+      "issue_id": 1131504664814714881,
+      "duration": 0.029521942138671875
+    },
+    {
+      "success": true,
+      "issue_id": 1131504665203310593,
+      "duration": 0.021199703216552734
+    },
+    {
+      "success": true,
+      "issue_id": 1131504665204457473,
+      "duration": 0.02096390724182129
+    },
+    {
+      "success": true,
+      "issue_id": 1131504665252855809,
+      "duration": 0.031023263931274414
+    },
+    {
+      "success": true,
+      "issue_id": 1131504665224216577,
+      "duration": 0.023227930068969727
+    },
+    {
+      "success": true,
+      "issue_id": 1131504665213632513,
+      "duration": 0.021426916122436523
+    },
+    {
+      "success": true,
+      "issue_id": 1131504665244729345,
+      "duration": 0.02832484245300293
+    },
+    {
+      "success": true,
+      "issue_id": 1131504665251282945,
+      "duration": 0.029271841049194336
+    },
+    {
+      "success": true,
+      "issue_id": 1131504665217368065,
+      "duration": 0.019739151000976562
+    },
+    {
+      "success": true,
+      "issue_id": 1131504665241419777,
+      "duration": 0.026254653930664062
+    },
+    {
+      "success": true,
+      "issue_id": 1131504665250922497,
+      "duration": 0.027966976165771484
+    }
+  ]
+}

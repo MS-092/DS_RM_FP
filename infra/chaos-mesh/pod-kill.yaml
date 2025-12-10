@@ -1,0 +1,16 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: gitea-pod-kill
+  namespace: gitforge
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces:
+      - gitforge
+    labelSelectors:
+      app: gitea
+  scheduler:
+    cron: "@every 5m"
+  duration: "10s"

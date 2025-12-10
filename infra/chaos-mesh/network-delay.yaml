@@ -1,0 +1,20 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: crdb-network-delay
+  namespace: gitforge
+spec:
+  action: delay
+  mode: all
+  selector:
+    namespaces:
+      - gitforge
+    labelSelectors:
+      app: cockroachdb
+  delay:
+    latency: "500ms"
+    correlation: "100"
+    jitter: "0ms"
+  duration: "60s"
+  scheduler:
+    cron: "@every 10m"
