@@ -8,7 +8,7 @@ GitForge is a distributed version control platform designed to eliminate single 
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         Users                                │
+│                         Users                               │
 └────────────┬────────────────────────────────────┬───────────┘
              │                                     │
              │ HTTP/HTTPS                          │ Git HTTP
@@ -41,7 +41,7 @@ GitForge is a distributed version control platform designed to eliminate single 
 └────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│                    Observability Layer                       │
+│                    Observability Layer                      │
 ├────────────────┬──────────────────┬─────────────────────────┤
 │  Prometheus    │    Grafana       │    Chaos Mesh           │
 │  (Metrics)     │  (Visualization) │  (Fault Injection)      │
