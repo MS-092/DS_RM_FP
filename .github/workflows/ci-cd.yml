@@ -173,6 +173,7 @@ jobs:
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
     
+      # setup kubernetes
     - name: Configure kubectl
       run: |
         echo "${{ secrets.KUBECONFIG_STAGING }}" | base64 -d > kubeconfig
@@ -197,6 +198,7 @@ jobs:
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
     
+      # setup kubernetes
     - name: Configure kubectl
       run: |
         echo "${{ secrets.KUBECONFIG_PRODUCTION }}" | base64 -d > kubeconfig

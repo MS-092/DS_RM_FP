@@ -23,11 +23,20 @@ export function RepositoryDetail() {
 
     const fetchRepository = async () => {
         try {
+            setLoading(true);
             const response = await repositoriesApi.getById(owner, repo);
             setRepository(response.data);
+            setError(null);
         } catch (err) {
             console.error("Error fetching repository:", err);
-            setError("Failed to load repository details");
+            if (err.response?.status === 404) {
+                setError("Repository not found");
+            } else {
+                setError("Failed to load repository details");
+            }
+            setRepository(null);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -81,7 +90,8 @@ export function RepositoryDetail() {
         if (encoding === "base64") {
             try {
                 return atob(content);
-            } catch (e) {
+            } catch (err) {
+                console.error(err);
                 return content;
             }
         }

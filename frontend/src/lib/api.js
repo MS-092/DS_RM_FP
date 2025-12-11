@@ -28,7 +28,11 @@ export const commentsApi = {
 export const repositoriesApi = {
     getAll: () => api.get('/api/repositories'),
     getById: (owner, repo) => api.get(`/api/repositories/${owner}/${repo}`),
-    getContents: (owner, repo, path = '') => api.get(`/api/repositories/${owner}/${repo}/contents/${path}`),
+    getContents: (owner, repo, path = '') => {
+        // Ensure trailing slash for root directory
+        const contentPath = path ? `/api/repositories/${owner}/${repo}/contents/${path}` : `/api/repositories/${owner}/${repo}/contents/`;
+        return api.get(contentPath);
+    },
     getFile: (owner, repo, path) => api.get(`/api/repositories/${owner}/${repo}/file/${path}`),
 };
 

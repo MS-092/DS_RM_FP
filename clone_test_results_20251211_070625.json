@@ -1,0 +1,49 @@
+{
+  "test_config": {
+    "repo_url": "http://localhost:3000/AdrielMS/public-repo-1.git",
+    "num_clones": 5,
+    "concurrent": 2
+  },
+  "summary": {
+    "total": 5,
+    "successful": 5,
+    "failed": 0,
+    "total_duration": 1.3525078296661377,
+    "throughput": 3.6968362698752246,
+    "avg_clone_time": 0.1234105110168457,
+    "total_size_mb": 0.12874603271484375,
+    "avg_size_mb": 0.02574920654296875
+  },
+  "results": [
+    {
+      "success": true,
+      "duration": 0.09398674964904785,
+      "size_bytes": 27000,
+      "clone_num": 0
+    },
+    {
+      "success": true,
+      "duration": 0.09299707412719727,
+      "size_bytes": 27000,
+      "clone_num": 1
+    },
+    {
+      "success": true,
+      "duration": 0.17934584617614746,
+      "size_bytes": 27000,
+      "clone_num": 2
+    },
+    {
+      "success": true,
+      "duration": 0.1778860092163086,
+      "size_bytes": 27000,
+      "clone_num": 3
+    },
+    {
+      "success": true,
+      "duration": 0.07283687591552734,
+      "size_bytes": 27000,
+      "clone_num": 4
+    }
+  ]
+}

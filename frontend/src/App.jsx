@@ -16,7 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/repos" element={<RepositoryList />} />
-            <Route path="/repos/:name" element={<RepositoryDetail />} />
+            <Route path="/repos/:owner/:repo" element={<RepositoryDetail />} />
             <Route path="/issues" element={<IssueList />} />
             <Route path="/issues/:id" element={<IssueDetail />} />
             <Route path="/status" element={<SystemStatus />} />
