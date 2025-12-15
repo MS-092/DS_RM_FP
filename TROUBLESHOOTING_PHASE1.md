@@ -12,7 +12,7 @@
 
 ```bash
 # From project root
-cd /Users/matthewstaniswinata/Documents/GitHub/DS_RM_FP
+cd Location of the Repo
 
 # Start all services
 docker compose up -d
@@ -72,7 +72,7 @@ curl http://localhost:8000/api/repositories
 
 ```bash
 # All in one:
-cd /Users/matthewstaniswinata/Documents/GitHub/DS_RM_FP
+cd Location of the Repo
 docker compose up -d
 sleep 15
 curl http://localhost:3000/api/v1/repos/search
