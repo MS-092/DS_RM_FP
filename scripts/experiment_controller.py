@@ -8,7 +8,7 @@ import os
 
 # --- CONFIGURATION BASED ON RESEARCH METHODOLOGY ---
 # Target URL to check System Availability [cite: 134]
-SYSTEM_URL = "http://localhost:8000/health" 
+SYSTEM_URL = "http://localhost:8000/api/health" 
 # Number of runs per configuration to ensure statistical power > 80% 
 TOTAL_RUNS = 20 
 # Chaos Mesh manifest to apply

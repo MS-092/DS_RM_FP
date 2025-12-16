@@ -12,5 +12,9 @@ spec:
       - gitforge
     labelSelectors:
       "app": "gitea" # Target the Git core replicas [cite: 63]
-  scheduler:
-    cron: "@every 10m" # Supports repeated experimental runs (n=20)
+  selector:
+    namespaces:
+      - gitforge
+    labelSelectors:
+      "app": "gitea" # Target the Git core replicas [cite: 63]
+
