@@ -235,240 +235,97 @@ docker compose -f docker-compose.prod.yml down
 
 ## Kubernetes Deployment
 
-### Prerequisites
+### Quick Start (Automated Script)
 
-- Kubernetes cluster (1.25+)
-- kubectl configured
-- Helm 3 (optional)
-- Chaos Mesh (for fault injection)
-
-### Namespace Setup
+The easiest way to deploy to Minikube is using the provided script:
 
 ```bash
-# Create namespace
-kubectl create namespace gitforge
+# 1. Start Minikube (if not running)
+minikube start --cpus=4 --memory=8192
 
-# Set as default
+# 2. Run the deployment script
+./scripts/deploy_k8s.sh
+```
+
+This script will:
+1. Build backend and frontend Docker images inside Minikube.
+2. Apply all Kubernetes manifests from `infra/k8s/`.
+3. Wait for all services to become ready.
+
+### Manual Deployment Steps
+
+If you prefer to deploy manually or debug specific components:
+
+#### 1. Namespace Setup
+
+```bash
+kubectl apply -f infra/k8s/00-namespace.yaml
 kubectl config set-context --current --namespace=gitforge
 ```
 
-### Deploy CockroachDB
-
-The manifests are already in `infra/kubernetes/cockroachdb.yaml`:
+#### 2. Deploy CockroachDB
 
 ```bash
-kubectl apply -f infra/kubernetes/cockroachdb.yaml
+kubectl apply -f infra/k8s/01-cockroachdb.yaml
+# Wait for pods
+kubectl wait --for=condition=ready pod -l app=cockroachdb -n gitforge --timeout=120s
 ```
 
-Wait for pods to be ready:
+#### 3. Deploy Gitea
 
 ```bash
-kubectl get pods -l app=cockroachdb -w
+kubectl apply -f infra/k8s/02-gitea.yaml
 ```
 
-Initialize the cluster (one-time):
+#### 4. Build & Deploy Backend
 
 ```bash
-kubectl exec -it cockroachdb-0 -- ./cockroach init --insecure
+# Set docker env to minikube
+eval $(minikube docker-env)
+
+# Build image
+docker build -t gitforge-backend:latest backend/
+
+# Deploy
+kubectl apply -f infra/k8s/03-backend.yaml
 ```
 
-### Deploy Gitea
+#### 5. Build & Deploy Frontend
 
 ```bash
-kubectl apply -f infra/kubernetes/gitea.yaml
+# Build image
+docker build -t gitforge-frontend:latest frontend/
+
+# Deploy
+kubectl apply -f infra/k8s/04-frontend.yaml
 ```
 
-### Deploy Backend
-
-Create `infra/kubernetes/backend.yaml`:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: backend
-  namespace: gitforge
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: backend
-  template:
-    metadata:
-      labels:
-        app: backend
-    spec:
-      containers:
-      - name: backend
-        image: your-registry/gitforge-backend:latest
-        ports:
-        - containerPort: 8000
-        env:
-        - name: DATABASE_URL
-          value: "cockroachdb+psycopg://root@cockroachdb:26257/defaultdb"
-        - name: GITEA_URL
-          value: "http://gitea:3000"
-        livenessProbe:
-          httpGet:
-            path: /api/health/live
-            port: 8000
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /api/health/ready
-            port: 8000
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend
-  namespace: gitforge
-spec:
-  selector:
-    app: backend
-  ports:
-  - port: 8000
-    targetPort: 8000
-  type: ClusterIP
-```
-
-Apply:
+#### 6. Configure Ingress
 
 ```bash
-kubectl apply -f infra/kubernetes/backend.yaml
-```
+# Enable ingress addon
+minikube addons enable ingress
 
-### Deploy Frontend
+# Apply ingress
+kubectl apply -f infra/k8s/05-ingress.yaml
 
-Create `infra/kubernetes/frontend.yaml`:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: frontend
-  namespace: gitforge
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: frontend
-  template:
-    metadata:
-      labels:
-        app: frontend
-    spec:
-      containers:
-      - name: frontend
-        image: your-registry/gitforge-frontend:latest
-        ports:
-        - containerPort: 80
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
-            memory: "256Mi"
-            cpu: "200m"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend
-  namespace: gitforge
-spec:
-  selector:
-    app: frontend
-  ports:
-  - port: 80
-    targetPort: 80
-  type: LoadBalancer
-```
-
-Apply:
-
-```bash
-kubectl apply -f infra/kubernetes/frontend.yaml
-```
-
-### Ingress Configuration
-
-Create `infra/kubernetes/ingress.yaml`:
-
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: gitforge-ingress
-  namespace: gitforge
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-spec:
-  ingressClassName: nginx
-  tls:
-  - hosts:
-    - gitforge.yourdomain.com
-    secretName: gitforge-tls
-  rules:
-  - host: gitforge.yourdomain.com
-    http:
-      paths:
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: backend
-            port:
-              number: 8000
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend
-            port:
-              number: 80
-```
-
-Apply:
-
-```bash
-kubectl apply -f infra/kubernetes/ingress.yaml
+# Start tunnel (in a separate terminal) for load balancer IP
+minikube tunnel
 ```
 
 ### Chaos Mesh Deployment
 
-Install Chaos Mesh:
+Install Chaos Mesh to enable fault injection experiments:
 
 ```bash
 curl -sSL https://mirrors.chaos-mesh.org/v2.6.0/install.sh | bash
 ```
 
-Apply chaos experiments:
+Apply chaos experiments when ready:
 
 ```bash
 # Pod kill experiment
-kubectl apply -f infra/chaos-mesh/pod-kill.yaml
-
-# Network delay experiment
-kubectl apply -f infra/chaos-mesh/network-delay.yaml
-```
-
-View chaos experiments:
-
-```bash
-kubectl get podchaos -n gitforge
-kubectl get networkchaos -n gitforge
+kubectl apply -f infra/chaos-mesh/pod-kill-experiment.yaml
 ```
 
 ### Verify Deployment
@@ -480,13 +337,10 @@ kubectl get pods -n gitforge
 # Check services
 kubectl get svc -n gitforge
 
-# Check ingress
-kubectl get ingress -n gitforge
-
 # View logs
 kubectl logs -f deployment/backend -n gitforge
-kubectl logs -f deployment/frontend -n gitforge
 ```
+
 
 ## Production Considerations
 

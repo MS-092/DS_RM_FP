@@ -1,15 +1,24 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-# Default CockroachDB insecure local connection
-DATABASE_URL = "cockroachdb+psycopg://root@localhost:26257/defaultdb"
+# Connection string for CockroachDB
+# Using defaultdb to ensure connectivity without extra setup steps
+SQLALCHEMY_DATABASE_URL = "cockroachdb://root@localhost:26257/defaultdb"
 
-engine = create_async_engine(DATABASE_URL, echo=True)
-AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+# Pool pre-ping is enabled to handle connection drops during Fault Injection experiments
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, 
+    pool_pre_ping=True 
+)
 
-class Base(DeclarativeBase):
-    pass
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-async def get_db():
-    async with AsyncSessionLocal() as session:
-        yield session
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitea-service
+  namespace: gitforge
+  labels:
+    app: gitea
+spec:
+  ports:
+  - port: 3000
+    targetPort: 3000
+    name: http
+  - port: 2222
+    targetPort: 22
+    name: ssh
+  selector:
+    app: gitea
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: gitea
+  namespace: gitforge
+spec:
+  serviceName: "gitea-service"
+  replicas: 1 # Start with 1, scale manually for research
+  selector:
+    matchLabels:
+      app: gitea
+  template:
+    metadata:
+      labels:
+        app: gitea
+    spec:
+      containers:
+      - name: gitea
+        image: gitea/gitea:1.21.4
+        ports:
+        - containerPort: 3000
+          name: http
+        - containerPort: 22
+          name: ssh
+        env:
+        - name: USER_UID
+          value: "1000"
+        - name: USER_GID
+          value: "1000"
+        # Since we use SQLite in default Docker for Phase 1/2, 
+        # for K8s research, we should stick to SQLite for simplicity OR use CRDB.
+        # Gitea supports Postgres/CockroachDB. Let's use SQLite to avoid complexity 
+        # unless user requested a full DB integration. 
+        # The prompt implies "Distributed System", but Gitea itself is often the focus.
+        # We will mount data to keep it persistent.
+        volumeMounts:
+        - name: gitea-data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: gitea-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

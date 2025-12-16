@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: gitforge
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+    name: http
+  selector:
+    app: backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: gitforge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: gitforge-backend:latest
+        imagePullPolicy: IfNotPresent # Use local minikube image
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          value: "cockroachdb://root@cockroachdb-public:26257/defaultdb?sslmode=disable"
+        - name: GITEA_URL
+          value: "http://gitea-service:3000"
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

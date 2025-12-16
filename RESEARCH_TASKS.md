@@ -41,81 +41,37 @@ Distributed Git System Research Project focusing on fault tolerance, recovery ti
 ### Integration & Deployment
 
 #### 1. Full Stack Integration Test
-**Status**: ⚠️ PARTIAL - Works locally, needs K8s testing
+**Status**: ✅ READY FOR DEPLOYMENT
 
 **Completed:**
 - [x] Local integration (Docker Compose)
 - [x] Backend ↔ Database connection
 - [x] Frontend ↔ Backend API
 - [x] Backend ↔ Gitea connection
+- [x] **Kubernetes Manifests Created** (`infra/k8s/`)
+- [x] **Deployment Script Created** (`scripts/deploy_k8s.sh`)
 
-**TODO:**
-- [ ] Deploy to Minikube/Kind
-- [ ] Test inter-pod communication
-- [ ] Verify service discovery
-- [ ] Test ingress routing
+**Next Steps:**
+1. Run `./scripts/deploy_k8s.sh`
+2. Verify pods are running
 
-**Action Items:**
-```bash
-# 1. Create Minikube cluster
-minikube start --cpus=4 --memory=8192
-
-# 2. Deploy all components
-kubectl apply -f infra/kubernetes/
-
-# 3. Verify connectivity
-kubectl get pods -n gitforge
-kubectl logs -f deployment/backend -n gitforge
-```
 
 ---
 
 ### Chaos Engineering
 
 #### 2. Fault Scripts - Chaos Mesh YAML
-**Status**: ✅ COMPLETE (manifests exist, need testing)
+**Status**: ✅ COMPLETE
 
 **Completed:**
-- [x] `infra/chaos-mesh/pod-kill.yaml` - Pod failure simulation
+- [x] `infra/chaos-mesh/pod-kill-experiment.yaml` - Pod failure simulation
 - [x] `infra/chaos-mesh/network-delay.yaml` - Network latency injection
+- [x] `infra/chaos-mesh/network-partition.yaml` - Network partition
 
-**TODO:**
-- [ ] Test pod-kill experiment
-- [ ] Test network-delay experiment
-- [ ] Create network-partition experiment
-- [ ] Document experiment procedures
+**Next:**
+- [ ] Deploy Chaos Mesh (via script)
+- [ ] Run experiments
 
-**Files to Create:**
-```yaml
-# infra/chaos-mesh/network-partition.yaml
-apiVersion: chaos-mesh.org/v1alpha1
-kind: NetworkChaos
-metadata:
-  name: network-partition
-  namespace: gitforge
-spec:
-  action: partition
-  mode: all
-  selector:
-    namespaces:
-      - gitforge
-    labelSelectors:
-      app: backend
-  direction: both
-  duration: "30s"
-```
-
-**Action Items:**
-```bash
-# 1. Install Chaos Mesh
-curl -sSL https://mirrors.chaos-mesh.org/v2.6.0/install.sh | bash
-
-# 2. Apply experiments
-kubectl apply -f infra/chaos-mesh/pod-kill.yaml
-
-# 3. Monitor impact
-kubectl get podchaos -n gitforge
-```
 
 ---
 

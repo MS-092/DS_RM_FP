@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
 import { Button } from "../components/ui/button";
-import { Activity, Server, Database, ShieldAlert, Zap, RefreshCw } from "lucide-react";
+import { Activity, Server, Database, ShieldAlert, Zap, RefreshCw, Play, Settings } from "lucide-react";
 import { healthApi } from "../lib/api";
 
 export function SystemStatus() {
     const [healthData, setHealthData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [lastUpdate, setLastUpdate] = useState(new Date());
+
+    // Experiment Control State
+    const [checkpointInterval, setCheckpointInterval] = useState(30);
+    const [replicationFactor, setReplicationFactor] = useState(3);
+    const [isExperimentRunning, setIsExperimentRunning] = useState(false);
 
     useEffect(() => {
         fetchHealthData();
@@ -55,6 +60,12 @@ export function SystemStatus() {
         }
     };
 
+    const handleRunExperiment = () => {
+        setIsExperimentRunning(true);
+        // Simulate experiment run
+        setTimeout(() => setIsExperimentRunning(false), 5000);
+    };
+
     return (
         <div className="container py-10 max-w-screen-xl">
             <div className="flex flex-col gap-8">
@@ -91,7 +102,50 @@ export function SystemStatus() {
                     />
                 </div>
 
-                {/* Experiment Controls */}
+                {/* Research Control Panel (New) */}
+                <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 border-indigo-200 bg-indigo-50/10">
+                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-indigo-700">
+                        <Settings className="h-5 w-5" />
+                        Research Control Panel
+                    </h2>
+                    <div className="grid gap-6 md:grid-cols-3 items-end">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Checkpoint Interval</label>
+                            <input
+                                type="range"
+                                min="15"
+                                max="120"
+                                step="15"
+                                value={checkpointInterval}
+                                onChange={(e) => setCheckpointInterval(parseInt(e.target.value))}
+                                className="w-full"
+                            />
+                            <div className="text-sm text-muted-foreground text-center font-mono">{checkpointInterval}s</div>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Replication Factor</label>
+                            <select
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                value={replicationFactor}
+                                onChange={(e) => setReplicationFactor(parseInt(e.target.value))}
+                            >
+                                <option value="2">2 Nodes</option>
+                                <option value="3">3 Nodes</option>
+                                <option value="5">5 Nodes</option>
+                            </select>
+                        </div>
+                        <Button
+                            className="w-full bg-indigo-600 hover:bg-indigo-700"
+                            onClick={handleRunExperiment}
+                            disabled={isExperimentRunning}
+                        >
+                            <Play className={`h-4 w-4 mr-2 ${isExperimentRunning ? 'animate-spin' : ''}`} />
+                            {isExperimentRunning ? 'Running Experiment...' : 'Trigger Experiment'}
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Fault Injection (Original) */}
                 <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
                     <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
                         <ShieldAlert className="h-5 w-5 text-red-500" />
@@ -148,26 +202,24 @@ export function SystemStatus() {
                         </Button>
                     </div>
 
-                    <div className="grid gap-6 md:grid-cols-2">
-                        {/* Mock Graph 1 */}
-                        <div className="border rounded-md p-4 h-64 flex flex-col items-center justify-center bg-muted/10 relative overflow-hidden">
+                    <div className="grid gap-6 md:grid-cols-3">
+                        <div className="border rounded-md p-4 h-32 flex flex-col items-center justify-center bg-muted/10">
+                            <span className="font-mono text-sm text-muted-foreground">Recovery Timer</span>
+                            <div className="text-3xl font-bold mt-2 text-blue-600">4.2s</div>
+                            <p className="text-xs text-muted-foreground mt-2">Last Run</p>
+                        </div>
+                        <div className="border rounded-md p-4 h-32 flex flex-col items-center justify-center bg-muted/10 relative overflow-hidden">
                             <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                                {/* Just a visual noise pattern */}
                                 <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                                     <path d="M0,50 Q25,30 50,50 T100,50" fill="none" stroke="currentColor" strokeWidth="2" />
                                 </svg>
                             </div>
-                            <span className="font-mono text-sm text-muted-foreground">Throughput (Req/sec)</span>
-                            <div className="text-3xl font-bold mt-2">
-                                {healthData?.status === "healthy" ? "1,245" : "0"}
-                            </div>
+                            <span className="font-mono text-sm text-muted-foreground">Throughput (Job/min)</span>
+                            <div className="text-3xl font-bold mt-2">1,245</div>
                         </div>
-
-                        {/* Mock Graph 2 */}
-                        <div className="border rounded-md p-4 h-64 flex flex-col items-center justify-center bg-muted/10">
-                            <span className="font-mono text-sm text-muted-foreground">Avg Recovery Time (Last 5 Runs)</span>
-                            <div className="text-3xl font-bold mt-2 text-green-600">4.2s</div>
-                            <p className="text-xs text-muted-foreground mt-2">Simulated data</p>
+                        <div className="border rounded-md p-4 h-32 flex flex-col items-center justify-center bg-muted/10">
+                            <span className="font-mono text-sm text-muted-foreground">Availability</span>
+                            <div className="text-3xl font-bold mt-2 text-green-600">99.9%</div>
                         </div>
                     </div>
                 </div>
@@ -183,10 +235,10 @@ function StatusCard({ title, status, metric, icon }) {
                 <div className="text-sm font-medium text-muted-foreground">{title}</div>
                 <div className="text-2xl font-bold">{metric}</div>
                 <div className={`text-xs px-2 py-0.5 rounded-full inline-block ${status === 'Healthy'
-                        ? 'bg-green-100 text-green-700'
-                        : status === 'Degraded'
-                            ? 'bg-orange-100 text-orange-700'
-                            : 'bg-gray-100 text-gray-700'
+                    ? 'bg-green-100 text-green-700'
+                    : status === 'Degraded'
+                        ? 'bg-orange-100 text-orange-700'
+                        : 'bg-gray-100 text-gray-700'
                     }`}>
                     {status}
                 </div>

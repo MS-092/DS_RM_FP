@@ -1,18 +1,22 @@
 apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
-  name: network-delay
+  name: network-partition
   namespace: gitforge
 spec:
-  action: delay
+  action: partition
   mode: all
   selector:
     namespaces:
       - gitforge
     labelSelectors:
       app: backend
-  delay:
-    latency: "500ms"
-    correlation: "100"
-    jitter: "0ms"
+  direction: both
   duration: "30s"
+  target:
+    selector:
+      namespaces:
+        - gitforge
+      labelSelectors:
+        app: cockroachdb
+    mode: one
