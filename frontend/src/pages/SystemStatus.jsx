@@ -29,11 +29,12 @@ export function SystemStatus() {
             console.error("Error fetching health data:", err);
             setHealthData({
                 status: "error",
-                services: {
+                components: {
                     database: "disconnected",
                     api: "error"
                 }
             });
+
         } finally {
             setLoading(false);
         }
@@ -41,8 +42,11 @@ export function SystemStatus() {
 
     const getServiceStatus = (service) => {
         if (!healthData) return "unknown";
-        return healthData.services[service] || "unknown";
+        // Check for 'components' (success) or fallback to 'services' (if error state used old key)
+        const servicesMap = healthData.components || healthData.services;
+        return servicesMap ? (servicesMap[service] || "unknown") : "unknown";
     };
+
 
     const getStatusColor = (status) => {
         switch (status) {

@@ -285,6 +285,10 @@ python scripts/analyze_recovery.py $RESULTS_DIR
 - [ ] Implement test automation
 - [ ] Add result collection
 - [ ] Create summary report generator
+**TODO:**
+ - [x] Deploy to Minikube/Kind
+ - [ ] Test inter-pod communication
+ - [ ] Verify service discovery
 
 ---
 
@@ -546,9 +550,9 @@ plt.savefig('availability_vs_replication.png')
 - Load testing scripts (100%)
 - Documentation (100%)
 - Baseline metrics (100%)
+- Kubernetes deployment (100%)
 
 🔄 IN PROGRESS:
-- Kubernetes deployment (0%)
 - Chaos experiments (50% - manifests ready)
 - Analysis scripts (0%)
 
