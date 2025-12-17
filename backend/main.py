@@ -7,6 +7,14 @@ from prometheus_fastapi_instrumentator import Instrumentator
 import httpx
 import os
 
+import threading
+import subprocess
+from fastapi.responses import JSONResponse
+
+from backend.fault_tolerance.checkpointing import CheckpointManager
+from backend.fault_tolerance.replication import WindowedReplicationManager
+from backend.fault_tolerance.combined import CombinedCheckpointReplicationManager
+
 import models
 from database import SessionLocal, engine, get_db
 
@@ -32,6 +40,112 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app_state = {
+    "counter": 0
+}
+
+def get_state():
+    return app_state
+
+# Checkpointing
+checkpoint_mgr = CheckpointManager(get_state)
+checkpoint_mgr.start_periodic_checkpointing()
+
+@app.post("/checkpoint/update")
+def checkpoint_update():
+    app_state["counter"] += 1
+    checkpoint_mgr.save_checkpoint()
+
+    return {
+        "technique": "checkpointing",
+        "state": app_state
+    }
+
+@app.post("/checkpoint/recover")
+def checkpoint_recover():
+    restored = checkpoint_mgr.load_checkpoint()
+    if restored:
+        app_state.update(restored)
+
+    return {
+        "technique": "checkpointing",
+        "recovered_state": app_state
+    }
+
+# Replication (window = 3 is hardcoded in replication.py)
+replication_mgr = WindowedReplicationManager(
+    peers=[
+        "http://backend-1:8000",
+        "http://backend-2:8000"
+    ]
+)
+
+@app.post("/replication/update")
+def replication_update():
+    app_state["counter"] += 1
+    replication_mgr.record_state_change(app_state)
+
+    return {
+        "technique": "replication",
+        "state": app_state,
+        "replication_window": 3
+    }
+
+
+# Combined
+combined_mgr = CombinedCheckpointReplicationManager(
+    replication_mgr=replication_mgr,
+    checkpoint_mgr=checkpoint_mgr
+)
+combined_mgr.start_periodic_checkpointing()
+
+@app.post("/combined/update")
+def combined_update():
+    app_state["counter"] += 1
+    combined_mgr.on_state_change(app_state)
+
+    return {
+        "technique": "combined",
+        "state": app_state,
+        "replication_window": 3,
+        "checkpointing": True
+    }
+
+@app.post("/combined/recover")
+def combined_recover():
+    restored = combined_mgr.recover()
+    if restored:
+        app_state.update(restored)
+
+    return {
+        "technique": "combined",
+        "recovered_state": app_state
+    }
+
+# Fault Injection
+@app.post("/api/run-fault-injection")
+def run_fault_injection():
+    """
+    Starts the experiment_controller.py script asynchronously.
+    The frontend can call this endpoint to trigger failures.
+    """
+    try:
+        def run_script():
+            subprocess.run(["python3", "experiment_controller.py"], check=True)
+
+        thread = threading.Thread(target=run_script)
+        thread.start()
+
+        return JSONResponse(
+            content={"status": "started", "message": "Fault injection experiment started"},
+            status_code=200
+        )
+    except Exception as e:
+        return JSONResponse(
+            content={"status": "error", "message": str(e)},
+            status_code=500
+        )
 
 # --- RESEARCH OBSERVABILITY ---
 # Instruments the app to expose metrics at /metrics for Prometheus

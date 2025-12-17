@@ -3,6 +3,8 @@ import { Button } from "../components/ui/button";
 import { Activity, Server, Database, ShieldAlert, Zap, RefreshCw, Play, Settings } from "lucide-react";
 import { healthApi } from "../lib/api";
 
+const [faultToleranceMode, setFaultToleranceMode] = useState("none");
+
 export function SystemStatus() {
     const [healthData, setHealthData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -60,10 +62,57 @@ export function SystemStatus() {
         }
     };
 
-    const handleRunExperiment = () => {
+    const handleRunExperiment = async () => {
+        console.log("Running experiment with:", {
+            faultToleranceMode,
+            checkpointInterval,
+            replicationFactor
+        });
+
         setIsExperimentRunning(true);
-        // Simulate experiment run
-        setTimeout(() => setIsExperimentRunning(false), 5000);
+
+        try {
+            // Determine which endpoint to call
+            let endpoint = "";
+            switch (faultToleranceMode) {
+                case "checkpointing":
+                    endpoint = "/checkpoint/update";
+                    break;
+                case "replication":
+                    endpoint = "/replication/update";
+                    break;
+                case "combined":
+                    endpoint = "/combined/update";
+                    break;
+                case "none":
+                default:
+                    console.log("No fault tolerance selected, skipping API call.");
+                    setIsExperimentRunning(false);
+                    return;
+            }
+
+            // Call the backend
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    checkpointInterval,
+                    replicationFactor
+                })
+            });
+
+            if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+            const data = await response.json();
+            console.log("Experiment applied:", data);
+            // Optionally update experiment results in UI
+            // setExperimentResult(data);
+
+        } catch (err) {
+            console.error("Failed to run experiment:", err);
+        } finally {
+            setIsExperimentRunning(false);
+        }
     };
 
     return (
@@ -110,6 +159,31 @@ export function SystemStatus() {
                     </h2>
                     <div className="grid gap-6 md:grid-cols-3 items-end">
                         <div className="space-y-2">
+                            <label className="text-sm font-medium">
+                                Fault Tolerance Technique
+                            </label>
+                            <select
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm
+                                        ring-offset-background focus-visible:outline-none focus-visible:ring-2
+                                        focus-visible:ring-ring focus-visible:ring-offset-2"
+                                value={faultToleranceMode}
+                                onChange={(e) => setFaultToleranceMode(e.target.value)}
+                            >
+                                <option value="none">No Fault Tolerance</option>
+                                <option value="checkpointing">Checkpointing Only</option>
+                                <option value="replication">Replication Only</option>
+                                <option value="combined">Checkpointing + Replication</option>
+                            </select>
+                            <p className="text-xs text-muted-foreground">
+                                Select the fault tolerance strategy before launching the experiment.
+                            </p>
+                        </div>
+
+                        <div className="text-xs font-mono text-indigo-600">
+                            Active Mode: {faultToleranceMode.toUpperCase()}
+                        </div>
+
+                        <div className="space-y-2">
                             <label className="text-sm font-medium">Checkpoint Interval</label>
                             <input
                                 type="range"
@@ -119,6 +193,7 @@ export function SystemStatus() {
                                 value={checkpointInterval}
                                 onChange={(e) => setCheckpointInterval(parseInt(e.target.value))}
                                 className="w-full"
+                                disabled={faultToleranceMode === "replication" || faultToleranceMode === "none"}
                             />
                             <div className="text-sm text-muted-foreground text-center font-mono">{checkpointInterval}s</div>
                         </div>
@@ -128,6 +203,7 @@ export function SystemStatus() {
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 value={replicationFactor}
                                 onChange={(e) => setReplicationFactor(parseInt(e.target.value))}
+                                disabled={faultToleranceMode === "checkpointing" || faultToleranceMode === "none"}
                             >
                                 <option value="2">2 Nodes</option>
                                 <option value="3">3 Nodes</option>
@@ -151,31 +227,30 @@ export function SystemStatus() {
                         <ShieldAlert className="h-5 w-5 text-red-500" />
                         Fault Injection (Chaos Mesh)
                     </h2>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                        <div className="p-4 border rounded-md bg-muted/20 space-y-3">
-                            <div className="font-medium text-sm">Node Failure</div>
-                            <p className="text-xs text-muted-foreground">Randomly kill one Gitea pod to test failover.</p>
-                            <Button variant="destructive" size="sm" className="w-full" disabled>
-                                Inject PodKill
-                            </Button>
-                            <p className="text-xs text-muted-foreground italic">Requires Kubernetes cluster</p>
-                        </div>
-                        <div className="p-4 border rounded-md bg-muted/20 space-y-3">
-                            <div className="font-medium text-sm">Network Partition</div>
-                            <p className="text-xs text-muted-foreground">Isolate CRDB Node-2 from the cluster.</p>
-                            <Button variant="destructive" size="sm" className="w-full" disabled>
-                                Inject Partition
-                            </Button>
-                            <p className="text-xs text-muted-foreground italic">Requires Kubernetes cluster</p>
-                        </div>
-                        <div className="p-4 border rounded-md bg-muted/20 space-y-3">
-                            <div className="font-medium text-sm">High Latency</div>
-                            <p className="text-xs text-muted-foreground">Add 500ms delay to all outgoing packets.</p>
-                            <Button variant="outline" size="sm" className="w-full border-red-200 text-red-600 hover:bg-red-50" disabled>
-                                Inject Latency
-                            </Button>
-                            <p className="text-xs text-muted-foreground italic">Requires Kubernetes cluster</p>
-                        </div>
+                    <Button
+                        variant="destructive"
+                        size="sm"
+                        className="w-full"
+                        onClick={async () => {
+                            setIsExperimentRunning(true);
+                            try {
+                                const response = await fetch("http://localhost:8000/api/run-fault-injection", {
+                                    method: "POST"
+                                });
+                                const data = await response.json();
+                                console.log(data);
+                                alert(data.message); // Notify the user
+                            } catch (err) {
+                                console.error("Failed to start fault injection:", err);
+                                alert("Failed to start fault injection");
+                            } finally {
+                                setIsExperimentRunning(false);
+                            }
+                        }}
+                    >
+                        Inject Failures
+                    </Button>
+
                         <div className="p-4 border rounded-md bg-muted/20 space-y-3">
                             <div className="font-medium text-sm">Refresh Status</div>
                             <p className="text-xs text-muted-foreground">Manually refresh health status.</p>
@@ -224,8 +299,7 @@ export function SystemStatus() {
                     </div>
                 </div>
             </div>
-        </div>
-    );
+    )
 }
 
 function StatusCard({ title, status, metric, icon }) {
