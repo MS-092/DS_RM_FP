@@ -54,7 +54,7 @@ async def list_repositories():
             all_repos = []
             
             # Known users to fetch repos from (can be made configurable)
-            users = ["matthew", "AdrielMS", "matthew-test"]  # Added user preference
+            users = ["matthew", "AdrielMS", "matthew-test", "RPK528", "rafael"]  # Added user preference
 
             
             for username in users:
@@ -221,3 +221,36 @@ async def get_file_content(owner: str, repo: str, path: str):
         raise HTTPException(status_code=503, detail=f"Gitea service unavailable: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+@router.get("/{owner}/{repo}/branches")
+async def get_branches(owner: str, repo: str):
+    """
+    Get branches for a repository.
+    """
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{GITEA_API_URL}/repos/{owner}/{repo}/branches",
+                timeout=10.0
+            )
+            if response.status_code != 200:
+                return []
+            return response.json()
+    except Exception:
+        return []
+
+@router.get("/{owner}/{repo}/issues")
+async def get_repo_issues(owner: str, repo: str):
+    """
+    Get Gitea-native issues for a specific repository.
+    """
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{GITEA_API_URL}/repos/{owner}/{repo}/issues",
+                timeout=10.0
+            )
+            if response.status_code != 200:
+                return []
+            return response.json()
+    except Exception:
+        return []

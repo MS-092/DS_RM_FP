@@ -42,8 +42,8 @@ export function IssueList() {
         <div className="container py-10 max-w-screen-xl">
             <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-3xl font-bold tracking-tight">Global Issue Tracker</h1>
-                    <p className="text-muted-foreground">Track bugs and features across the entire distributed system.</p>
+                    <h1 className="text-3xl font-bold tracking-tight">System Reliability Log</h1>
+                    <p className="text-muted-foreground">Automated log of system failures, recovery events, and research anomalies detected during experiments.</p>
                 </div>
 
                 {/* Controls */}
@@ -63,7 +63,9 @@ export function IssueList() {
                         <Button variant={filter === "open" ? "default" : "outline"} onClick={() => setFilter("open")}>Open</Button>
                         <Button variant={filter === "closed" ? "default" : "outline"} onClick={() => setFilter("closed")}>Closed</Button>
                     </div>
-                    <Button className="w-full sm:w-auto">New Issue</Button>
+                    <Link to="/issues/new" className="w-full sm:w-auto">
+                        <Button className="w-full">New Issue</Button>
+                    </Link>
                 </div>
 
                 {/* Loading State */}

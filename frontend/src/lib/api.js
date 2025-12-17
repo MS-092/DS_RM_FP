@@ -15,16 +15,16 @@ const api = axios.create({
 
 // Issues API
 export const issuesApi = {
-    getAll: () => api.get('/api/issues'),
+    getAll: () => api.get('/api/issues/'),
     getById: (id) => api.get(`/api/issues/${id}`),
-    create: (data) => api.post('/api/issues', data),
+    create: (data) => api.post('/api/issues/', data),
     delete: (id) => api.delete(`/api/issues/${id}`),
 };
 
 // Comments API
 export const commentsApi = {
     getByIssueId: (issueId) => api.get(`/api/comments/issue/${issueId}`),
-    create: (data) => api.post('/api/comments', data),
+    create: (data) => api.post('/api/comments/', data),
     delete: (id) => api.delete(`/api/comments/${id}`),
 };
 
@@ -38,6 +38,8 @@ export const repositoriesApi = {
         return api.get(contentPath);
     },
     getFile: (owner, repo, path) => api.get(`/api/repositories/${owner}/${repo}/file/${path}`),
+    getBranches: (owner, repo) => api.get(`/api/repositories/${owner}/${repo}/branches`),
+    getIssues: (owner, repo) => api.get(`/api/repositories/${owner}/${repo}/issues`),
 };
 
 // Health API

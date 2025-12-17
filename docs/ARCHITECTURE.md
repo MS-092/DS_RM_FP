@@ -230,45 +230,64 @@ CREATE TABLE comments (
 (Separate flow for readiness probe)
 ```
 
-## Fault Tolerance
+## Fault Tolerance Architecture
 
-### Database Failures
+GitForge implements a dual-layer fault tolerance architecture:
+1.  **Infrastructure Layer**: Kubernetes-native mechanisms (for production reliability).
+2.  **Application Research Layer**: Explicit algorithms implemented in Python (for empirical study).
 
-**Scenario**: One CockroachDB node fails
+### 1. Infrastructure Layer (Production)
 
-**Behavior**:
-1. Raft consensus detects failure
-2. Remaining nodes elect new leader
-3. Data remains available (RF=3)
-4. Queries continue without interruption
-5. Failed node can rejoin when recovered
+This layer ensures the base platform remains operational.
 
-**Recovery Time**: < 5 seconds
+*   **Database (CockroachDB)**: Uses Raft consensus. Configured with `replicas: 3`. Tolerates 1 node failure without data loss (RF=3).
+*   **Git Storage (Gitea)**: Uses `StatefulSet` with Persistent Volume Claims (PVC). Data survives pod restarts.
+*   **API Gateway (Backend)**: Stateless. Kubernetes `Deployment` ensures `replicas: 1+` are always running.
 
-### Backend Failures
+### 2. Application Research Layer (Experimental)
 
-**Scenario**: One backend pod crashes
+This layer is the core of the research project (`backend/fault_tolerance/`). It implements the "Strategy Pattern" to dynamically switch recovery mechanisms at runtime.
 
-**Behavior**:
-1. Kubernetes detects pod failure
-2. Load balancer removes pod from rotation
-3. Requests route to healthy pods
-4. Kubernetes restarts failed pod
-5. Pod rejoins when health checks pass
+#### Class Structure
+*   **`FaultToleranceManager`**: Singleton coordinator. Handles strategy switching and metrics collection.
+*   **`BaseFaultToleranceStrategy` (Interface)**: Defines `store()`, `retrieve()`, `recover()`.
+*   **Strategies**:
+    *   **Baseline (`BaselineStrategy`)**:
+        *   *Mechanism*: In-memory dictionary.
+        *   *Failure*: `dict.clear()`.
+        *   *Recovery*: Re-initialization (empty).
+    *   **Checkpointing (`CheckpointingStrategy`)**:
+        *   *Mechanism*: Asynchronous background thread writes to disk (JSON/Pickle).
+        *   *Recovery*: Load latest valid snapshot + replay Write-Ahead-Log (WAL).
+    *   **Replication (`ReplicationStrategy`)**:
+        *   *Mechanism*: Active in-memory replication to virtual "nodes" (Python objects).
+        *   *Recovery*: Failover to healthy virtual replica.
+    *   **Hybrid (`HybridStrategy`)**:
+        *   *Mechanism*: Combined replication (for speed) and checkpointing (for catastrophe).
 
-**Recovery Time**: 10-30 seconds
+#### Data Flow (Research Mode)
 
-### Frontend Failures
+```
+1. Client POST /api/fault-tolerance/store
+   ↓
+2. Manager delegates to Active Strategy (e.g., Replication)
+   ↓
+3. Strategy writes to Virtual Node A AND Virtual Node B
+   ↓
+4. Acknowledge Write (200 OK)
+   ↓
+[External Trigger: Chaos Mesh Kills Pod]
+   ↓
+5. System Restarts
+   ↓
+6. Manager initializes
+   ↓
+7. Client POST /api/fault-tolerance/recover
+   ↓
+8. Strategy executes specific recovery logic (e.g., Load from Disk)
+```
 
-**Scenario**: Frontend pod crashes
-
-**Behavior**:
-1. Nginx/Load balancer detects failure
-2. Requests route to healthy pods
-3. Kubernetes restarts pod
-4. Static files served from healthy pods
-
-**Recovery Time**: < 10 seconds
+**Recovery Time Objective (RTO)** is measured from step 7 start to finish.
 
 ## Security
 

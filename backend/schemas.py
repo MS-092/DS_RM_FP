@@ -26,8 +26,8 @@ class IssueBase(BaseModel):
     repo_id: Optional[int] = None
 
 class IssueCreate(IssueBase):
-    creator_id: Optional[UUID] = None
-    assignee_id: Optional[UUID] = None
+    creator_id: Optional[str] = None
+    assignee_id: Optional[str] = None
 
 class IssueUpdate(BaseModel):
     title: Optional[str] = None
@@ -38,8 +38,8 @@ class IssueUpdate(BaseModel):
 class Issue(IssueBase):
     issue_id: int
     status: str
-    creator_id: Optional[UUID]
-    assignee_id: Optional[UUID]
+    creator_id: Optional[str]
+    assignee_id: Optional[str]
     created_at: datetime
     updated_at: datetime
     

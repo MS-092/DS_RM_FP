@@ -4,6 +4,7 @@ import { LandingPage } from "./pages/LandingPage";
 import { RepositoryList } from "./pages/RepositoryList";
 import { RepositoryDetail } from "./pages/RepositoryDetail";
 import { IssueList } from "./pages/IssueList";
+import { CreateIssue } from "./pages/CreateIssue";
 import { IssueDetail } from "./pages/IssueDetail";
 import { SystemStatus } from "./pages/SystemStatus";
 
@@ -18,6 +19,7 @@ function App() {
             <Route path="/repos" element={<RepositoryList />} />
             <Route path="/repos/:owner/:repo" element={<RepositoryDetail />} />
             <Route path="/issues" element={<IssueList />} />
+            <Route path="/issues/new" element={<CreateIssue />} />
             <Route path="/issues/:id" element={<IssueDetail />} />
             <Route path="/status" element={<SystemStatus />} />
           </Routes>

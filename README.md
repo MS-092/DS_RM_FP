@@ -1,6 +1,8 @@
-# GitForge: Distributed Repository System
+# GitForge: Distributed System Resilience Research Platform
 
-GitForge is a distributed version control platform designed to decouple the Git engine from metadata storage, eliminating Single Points of Failure (SPOF). This project serves as both a robust Git hosting solution and a research testbed for distributed system experiments.
+GitForge is a specialized distributed system architecture designed to serve as a rigorous testbed for empirical fault tolerance research. Operating within a Kubernetes-orchestrated microservices environment, it provides a controlled setting to strictly evaluate and compare **Checkpointing**, **Replication**, and **Hybrid** recovery strategies.
+
+Beyond its role as a functional Git hosting service (similar to GitHub/Gitea), its primary engineering purpose is to facilitate the quantitative analysis of **Recovery Time Objective (RTO)** and **Data Integrity** under induced chaotic failure conditions.
 
 ## 🚀 Recent Improvements
 
@@ -69,13 +71,16 @@ Then visit:
 - 🌪️ **Chaos Engineering**: Chaos Mesh experiments for fault injection
 - 📊 **Monitoring**: Grafana dashboard configurations
 
-## 🧪 Research Goals
+## 🧪 Research Objectives
 
-This system is used to measure:
-- **Recovery Time** under different checkpointing intervals
-- **Availability** during node failures
-- **Replication Lag** under various load conditions
-- **Failover Performance** in distributed scenarios
+The platform is instrumented to conduct specific empirical studies:
+
+1.  **Fault Tolerance efficacy**: Comparative analysis of Baseline, Checkpointing, Replication, and Hybrid strategies.
+2.  **Recovery Performance**: Millisecond-precision measurement of Recovery Time Objective (RTO) following catastrophic pod failure.
+3.  **Data Durability**: Quantitative assessment of data loss (RPO) during sudden termination events.
+4.  **Overhead Analysis**: Evaluation of the operational cost (latency, resource usage) associated with each resilience strategy.
+
+See [RESEARCH_PROTOCOL.md](./docs/RESEARCH_PROTOCOL.md) for the detailed experimental methodology.
 
 ## 📚 API Endpoints
 
