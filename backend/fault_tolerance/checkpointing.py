@@ -168,9 +168,9 @@ class CheckpointingStrategy(BaseFaultToleranceStrategy):
         """
         start_time = time.time()
         
-        # Simulate File System Access Latency (finding files)
+        # REALISM UPDATE: Increased latencies to simulate Cloud/Network Storage
         import random
-        fs_access_latency = random.uniform(0.005, 0.020)
+        fs_access_latency = random.uniform(0.1, 0.3) # 100-300ms latency to find file
         time.sleep(fs_access_latency)
         
         if not self._is_failed:
@@ -178,10 +178,10 @@ class CheckpointingStrategy(BaseFaultToleranceStrategy):
             return fs_access_latency
         
         # CORRUPTION SIMULATION
-        # 2% chance that the checkpoint file is corrupted (e.g. partial write during crash)
+        # 2% chance that the checkpoint file is corrupted
         if random.random() < 0.02:
             logger.critical("🔥 DISK CORRUPTION: Checkpoint file is corrupted and unreadable!")
-            self._is_failed = False # System is 'up' but empty
+            self._is_failed = False 
             self._start_checkpointing()
             return time.time() - start_time
             
@@ -190,16 +190,16 @@ class CheckpointingStrategy(BaseFaultToleranceStrategy):
             checkpoint_loaded = self._load_latest_checkpoint()
             
             if checkpoint_loaded:
-                # Simulate Read Bandwidth (e.g., 50MB/s)
-                # Assume average record size is 1KB
+                # Simulate Read Bandwidth (e.g., AWS EBS or S3)
+                # Intentionally slower for demo visibility
                 data_size_kb = len(self._data_store) * 1.0 
-                # Time = Size / Speed + Seek Time
-                read_time = (data_size_kb / 50000.0) + random.uniform(0.010, 0.030)
-                time.sleep(read_time)
                 
-                # Simulate WAL Replay (if we had persistent WAL, which we simulate here)
-                # Replaying log entries takes CPU time
-                replay_time = len(self._data_store) * 0.0001
+                # Base latency + Transfer time (0.001s per KB is slow but visible)
+                transfer_time = (data_size_kb * 0.005) + random.uniform(0.2, 0.5)
+                time.sleep(transfer_time)
+                
+                # Simulate WAL Replay CPU time
+                replay_time = len(self._data_store) * 0.002
                 time.sleep(replay_time)
                 
         except Exception as e:

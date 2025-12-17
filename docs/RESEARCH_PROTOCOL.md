@@ -135,35 +135,30 @@ curl http://localhost:8000/api/fault-tolerance/retrieve/test_key_1
 
 ---
 
-### Method 2: Automated Experiment (Full Suite)
+### Method 2: Research Control Panel (GUI)
+*The most user-friendly way to conduct individual tests.*
 
-Run a complete experiment with a single API call:
-
-```bash
-curl -X POST http://localhost:8000/api/fault-tolerance/run-experiment \
-  -H "Content-Type: application/json" \
-  -d '{
-    "strategy": "checkpointing",
-    "data_items": 100,
-    "checkpoint_interval": 30
-  }'
-```
-
-**Response:**
-```json
-{
-  "strategy": "checkpointing",
-  "strategy_full_name": "Checkpointing (Interval: 30s)",
-  "data_items": 100,
-  "store_time_seconds": 0.0123,
-  "recovery_time_seconds": 0.0456,
-  "items_recovered": 100,
-  "data_recovery_rate_percent": 100.0,
-  "stats": {...}
-}
-```
+1.  **Access Dashboard**: Navigate to `/system` (e.g., `http://localhost/system`).
+2.  **Select Strategy**: Use the "Research Control Panel" dropdown to choose (e.g., `Hybrid`).
+3.  **Configure**: Adjust "Replication Factor" or "Checkpoint Interval" sliders.
+4.  **Run**: Click **"Run Experiment"**.
+5.  **Observe**:
+    *   **Live Metrics**: Watch the "Recovery Time" card update.
+    *   **Fault Injection**: Use the red buttons below to simulate "PodKill" or "Partition" during the run.
 
 ---
+
+### Method 3: Automated Experiment (Full Suite via API)
+*For generating the final dataset.*
+
+Run the provided Python script which iterates through all configurations (N=20 runs each):
+
+```bash
+# Ensure 4-terminal setup is running (tunnels + backend)
+python3 scripts/run_ft_experiments.py
+```
+
+Results are saved to `experiment_results_YYYYMMDD.csv` for analysis.
 
 ### Method 3: Python Script (For N=20 Runs)
 

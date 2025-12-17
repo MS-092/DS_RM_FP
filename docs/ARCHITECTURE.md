@@ -329,15 +329,33 @@ This layer is the core of the research project (`backend/fault_tolerance/`). It 
 - **Secrets management**: Kubernetes secrets
 - **Network policies**: Restrict pod-to-pod communication
 
-### Authentication & Authorization
+### Authentication & Authorization (Implemented)
 
-*Note: Not yet implemented*
+The system checks permissions against Gitea's API but manages session state independently via stateless JWTs.
 
-Future implementation:
-- JWT tokens for API authentication
-- OAuth2 for third-party integrations
-- RBAC for fine-grained permissions
-- API keys for programmatic access
+1.  **The "Proxy" Pattern (Security)**:
+    *   **Principle**: GitForge never stores user passwords.
+    *   **Mechanism**: On login, credentials are exchanged with Gitea for an Access Token. This token is encrypted and embedded in the GitForge JWT.
+    *   **Benefit**: Minimizes attack surface. If GitForge DB is leaked, no credentials are compromised.
+
+2.  **Consistency Strategy**:
+    *   **Question**: "How do we ensure that if Gitea is down, GitForge handles the error gracefully?"
+    *   **Answer**: Circuit Breaker pattern. If Gitea API returns 503, GitForge degrades functionality (e.g., Read-Only mode for metadata) but keeps the Issue Tracker (CockroachDB) online.
+    *   **Sync**: Updates are always performed via Gitea REST API (`PUT /api/v1/...`), ensuring hooks and internal consistency are maintained by the source of truth.
+
+3.  **Privilege Separation (RBAC)**:
+    *   **Policy**:
+        *   **Private Repos**: Strict Ownership. Only the repo owner can Read/Write.
+        *   **Public Repos**: World Readable. Only Owner can Write/Delete.
+    *   **Implementation**: Logic resides in `backend/dependencies.py` layer, enforcing checks *before* proxying requests.
+
+4.  **Webhooks (Reverse Sync)**:
+    *   *Optional Design*: To ensure Gitea -> GitForge consistency (e.g., user pushes code via CLI), a Webhook Listener (`POST /api/webhooks`) consumes Gitea push events to update GitForge's metadata cache if needed.
+
+### Tech Stack
+*   **Backend**: Python (FastAPI) for high-performance async I/O.
+*   **Auth**: PyJWT for stateless session management.
+*   **Integration**: `httpx` for async non-blocking calls to Gitea.
 
 ## Observability
 

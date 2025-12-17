@@ -236,8 +236,8 @@ class ReplicationStrategy(BaseFaultToleranceStrategy):
         """
         start_time = time.time()
         
-        # Simulate Network Latency for node discovery (10-50ms)
-        discovery_latency = random.uniform(0.010, 0.050)
+        # Simulate Network Latency for node discovery (100-400ms)
+        discovery_latency = random.uniform(0.1, 0.4)
         time.sleep(discovery_latency)
         
         if not self._failed_nodes:
@@ -273,8 +273,8 @@ class ReplicationStrategy(BaseFaultToleranceStrategy):
                 replica = self._replicas[node_id]
                 
                 # Simulate Data Transfer Latency
-                # 0.5ms per item + 20ms base overhead
-                transfer_latency = 0.020 + (data_size * 0.0005)
+                # 2ms per item + 200ms base overhead
+                transfer_latency = 0.2 + (data_size * 0.002)
                 time.sleep(transfer_latency)
                 
                 # Copy data from healthy source (simulating sync)

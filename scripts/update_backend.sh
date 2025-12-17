@@ -20,4 +20,4 @@ kubectl rollout restart deployment/backend -n gitforge
 echo "⏳ Waiting for rollout..."
 kubectl rollout status deployment/backend -n gitforge
 
-echo "✅ Backend updated successfully! 'rafael' should now be in the repository list."
+echo "Backend updated successfully"

@@ -11,7 +11,7 @@ import models
 from database import SessionLocal, engine, get_db
 
 # Routers
-from routers import issues, comments, repositories, fault_tolerance
+from routers import issues, comments, repositories, fault_tolerance, auth
 
 # Create tables (if they don't exist)
 models.Base.metadata.create_all(bind=engine)
@@ -42,6 +42,7 @@ app.include_router(issues.router)
 app.include_router(comments.router)
 app.include_router(repositories.router)
 app.include_router(fault_tolerance.router)
+app.include_router(auth.router)
 
 # --- ROOT ENDPOINTS ---
 @app.get("/")
@@ -57,7 +58,8 @@ def root():
             "repositories": "/api/repositories",
             "issues": "/api/issues",
             "fault_tolerance": "/api/fault-tolerance",
-            "metrics": "/metrics"
+            "metrics": "/metrics",
+            "auth": "/api/auth/login"
         }
     }
 
@@ -69,10 +71,8 @@ def api_root():
             "/api/health",
             "/api/repositories",
             "/api/issues",
-            "/api/fault-tolerance/status",
-            "/api/fault-tolerance/strategies",
-            "/api/fault-tolerance/configure",
-            "/api/fault-tolerance/run-experiment"
+            "/api/fault-tolerance",
+            "/api/auth"
         ]
     }
 

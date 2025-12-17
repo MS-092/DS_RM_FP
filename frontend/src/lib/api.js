@@ -13,6 +13,29 @@ const api = axios.create({
     },
 });
 
+// Request interceptor to add JWT token
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+// Auth API
+export const authApi = {
+    login: (username, password) => {
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('password', password);
+        return api.post('/api/auth/login', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+    },
+    register: (data) => api.post('/api/auth/register', data),
+    me: () => api.get('/api/auth/me'), // Assuming you might have a /me endpoint or similar
+};
+
 // Issues API
 export const issuesApi = {
     getAll: () => api.get('/api/issues/'),
@@ -45,6 +68,14 @@ export const repositoriesApi = {
 // Health API
 export const healthApi = {
     check: () => api.get('/api/health'),
+};
+
+// Fault Tolerance API
+export const faultToleranceApi = {
+    getStatus: () => api.get('/api/fault-tolerance/status'),
+    configure: (config) => api.post('/api/fault-tolerance/configure', config),
+    simulateFailure: (data) => api.post('/api/fault-tolerance/simulate-failure', data),
+    runExperiment: (data) => api.post('/api/fault-tolerance/run-experiment', data),
 };
 
 export default api;

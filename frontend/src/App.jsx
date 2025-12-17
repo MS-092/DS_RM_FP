@@ -7,6 +7,7 @@ import { IssueList } from "./pages/IssueList";
 import { CreateIssue } from "./pages/CreateIssue";
 import { IssueDetail } from "./pages/IssueDetail";
 import { SystemStatus } from "./pages/SystemStatus";
+import { LoginPage } from "./pages/LoginPage";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Navbar />
         <main>
           <Routes>
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<LandingPage />} />
             <Route path="/repos" element={<RepositoryList />} />
             <Route path="/repos/:owner/:repo" element={<RepositoryDetail />} />

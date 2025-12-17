@@ -20,4 +20,4 @@ kubectl rollout restart deployment/frontend -n gitforge
 echo "⏳ Waiting for rollout..."
 kubectl rollout status deployment/frontend -n gitforge
 
-echo "✅ Frontend updated! Refresh your browser to see the 'Create Issue' page."
+echo "Frontend updated"
