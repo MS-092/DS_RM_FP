@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   cockroachdb:
     image: cockroachdb/cockroach:v23.1.10
@@ -24,6 +26,64 @@ services:
     volumes:
       - gitea-data:/data
     restart: always
+
+  issue-service:
+    build:
+      context: ./issue-service
+      dockerfile: Dockerfile
+    container_name: issue-service
+    ports:
+      - "8002:8000"
+    environment:
+      DATABASE_URL: "cockroachdb://root@cockroachdb:26257/gitforge?sslmode=disable"
+    depends_on:
+      cockroachdb:
+        condition: service_healthy
+
+  comment-service:
+    build:
+      context: ./comment-service
+      dockerfile: Dockerfile
+    container_name: comment-service
+    ports:
+      - "8003:8000"
+    environment:
+      DATABASE_URL: "cockroachdb://root@cockroachdb:26257/gitforge?sslmode=disable"
+      ISSUE_SERVICE_URL: "http://issue-service:8002"
+      USER_SERVICE_URL: "http://user-service:8004"
+    depends_on:
+      cockroachdb:
+        condition: service_healthy
+      issue-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+
+  repository-service:
+    build:
+      context: ./repository-service
+      dockerfile: Dockerfile
+    container_name: repository-service
+    ports:
+      - "8005:8000"
+    environment:
+      GITEA_URL: "http://gitea:3000"
+    depends_on:
+      gitea:
+        condition: service_healthy
+
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "8004:8000"
+    environment:
+      DATABASE_URL: "cockroachdb://root@cockroachdb:26257/gitforge?sslmode=disable"
+    depends_on:
+      cockroachdb:
+        condition: service_healthy
 
 volumes:
   cockroach-data:
