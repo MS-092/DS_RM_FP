@@ -13,7 +13,7 @@ Beyond its role as a functional Git hosting service (similar to GitHub/Gitea), i
 - ✅ **CORS Support**: Proper cross-origin configuration
 - ✅ **API Documentation**: Interactive Swagger docs at `/docs`
 
-See [IMPROVEMENTS.md](./IMPROVEMENTS.md) for detailed changes.
+See [IMPROVEMENTS.md](./docs/IMPROVEMENTS.md) for detailed changes.
 
 ## 📁 Project Structure
 
@@ -23,7 +23,7 @@ See [IMPROVEMENTS.md](./IMPROVEMENTS.md) for detailed changes.
 
 ## 🏃 Quick Start
 
-See [QUICKSTART.md](./QUICKSTART.md) for detailed instructions.
+See [QUICKSTART.md](./docs/QUICKSTART.md) for detailed instructions.
 
 ### TL;DR
 
@@ -126,12 +126,12 @@ Full API documentation available at `http://localhost:8000/docs` when running.
 
 ### Quick Links
 - **[User Guide](./docs/USER_GUIDE.md)** - Complete guide on using GitForge
-- **[Quick Start](./QUICKSTART.md)** - Get up and running in 5 minutes
+- **[Quick Start](./docs/QUICKSTART.md)** - Get up and running in 5 minutes
 - **[API Reference](./docs/API_REFERENCE.md)** - Complete API documentation
 - **[Deployment Guide](./docs/DEPLOYMENT.md)** - Production deployment instructions
 - **[Testing Guide](./docs/TESTING.md)** - Testing strategies and examples
 - **[Architecture](./docs/ARCHITECTURE.md)** - System architecture and design
-- **[Improvements Log](./IMPROVEMENTS.md)** - Recent improvements and changes
+- **[Improvements Log](./docs/IMPROVEMENTS.md)** - Latest improvements and changes
 
 ### For Developers
 - **[Testing Guide](./docs/TESTING.md)** - How to run and write tests
@@ -167,7 +167,7 @@ See [Testing Guide](./docs/TESTING.md) for details.
 ## 🚀 Deployment
 
 ### Local Development
-See [QUICKSTART.md](./QUICKSTART.md)
+See [QUICKSTART.md](./docs/QUICKSTART.md)
 
 ### Production Deployment
 See [Deployment Guide](./docs/DEPLOYMENT.md) for:
@@ -194,22 +194,22 @@ This is a research project. Contributions are welcome! Areas for improvement:
 
 See [Testing Guide](./docs/TESTING.md) for testing requirements.
 
-## 📝 License
-
-This project is for educational and research purposes.
-
-## 📞 Support
+## Support
 
 - **Documentation**: Check the [docs](./docs/) directory
 - **Issues**: Create an issue in the repository
 - **API Docs**: http://localhost:8000/docs (when running)
 
-## 🎯 Project Status
+## License
+
+- This project is for educational and research purposes.
+
+## Project Status
 
 - ✅ Core functionality complete
 - ✅ Full documentation
 - ✅ Testing infrastructure
 - ✅ CI/CD pipeline
 - ✅ Production-ready
-- 🔄 Authentication (in progress)
+- 🔄 Authentication (planned) / Currently navigated to Gitea authentication page
 - 🔄 Advanced features (planned)
