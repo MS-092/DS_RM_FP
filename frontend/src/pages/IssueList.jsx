@@ -34,7 +34,7 @@ export function IssueList() {
         const matchesFilter = filter === "all" || issue.status === filter;
         const matchesSearch =
             issue.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            issue.repository.toLowerCase().includes(searchTerm.toLowerCase());
+            (issue.repository ? issue.repository.toLowerCase().includes(searchTerm.toLowerCase()) : false);
         return matchesFilter && matchesSearch;
     });
 
@@ -42,8 +42,7 @@ export function IssueList() {
         <div className="container py-10 max-w-screen-xl">
             <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-3xl font-bold tracking-tight">Global Issue Tracker</h1>
-                    <p className="text-muted-foreground">Track bugs and features across the entire distributed system.</p>
+                    <h1 className="text-3xl font-bold tracking-tight">System Reliability Log</h1>
                 </div>
 
                 {/* Controls */}
@@ -63,7 +62,9 @@ export function IssueList() {
                         <Button variant={filter === "open" ? "default" : "outline"} onClick={() => setFilter("open")}>Open</Button>
                         <Button variant={filter === "closed" ? "default" : "outline"} onClick={() => setFilter("closed")}>Closed</Button>
                     </div>
-                    <Button className="w-full sm:w-auto">New Issue</Button>
+                    <Link to="/issues/new" className="w-full sm:w-auto">
+                        <Button className="w-full">New Issue</Button>
+                    </Link>
                 </div>
 
                 {/* Loading State */}
@@ -116,7 +117,7 @@ export function IssueList() {
                                 </div>
                                 <div className="col-span-2">
                                     <span className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 truncate max-w-full">
-                                        {issue.repository}
+                                        {issue.repository || (issue.repo_id === 0 ? "System Log" : `Repo #${issue.repo_id}`)}
                                     </span>
                                 </div>
                                 <div className="col-span-2 text-right flex items-center justify-end gap-1 text-muted-foreground text-sm">

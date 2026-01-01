@@ -29,7 +29,7 @@ spec:
       containers:
       - name: backend
         image: gitforge-backend:latest
-        imagePullPolicy: IfNotPresent # Use local minikube image
+        imagePullPolicy: Never # Force use of locally loaded image
         ports:
         - containerPort: 8000
         env:

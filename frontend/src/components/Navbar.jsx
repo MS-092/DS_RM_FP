@@ -3,6 +3,14 @@ import { Github, Activity, Layers, Server } from "lucide-react";
 import { Button } from "./ui/button";
 
 export function Navbar() {
+    const username = localStorage.getItem('username');
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        window.location.href = '/login'; // Force refresh to clear state if needed
+    };
+
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 max-w-screen-2xl items-center">
@@ -40,20 +48,22 @@ export function Navbar() {
                     </nav>
                 </div>
                 <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-                    <div className="w-full flex-1 md:w-auto md:flex-none">
-                        {/* Search placeholder */}
-                    </div>
+                    <div className="w-full flex-1 md:w-auto md:flex-none"></div>
                     <nav className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm" asChild>
-                            <a href="http://localhost:3000/user/login" target="_blank" rel="noreferrer">
-                                Login
-                            </a>
-                        </Button>
-                        <Button size="sm" asChild className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 border-0">
-                            <a href="http://localhost:3000/user/sign_up" target="_blank" rel="noreferrer">
-                                Sign Up
-                            </a>
-                        </Button>
+                        {username ? (
+                            <>
+                                <span className="text-sm text-slate-500 mr-2">Hi, {username}</span>
+                                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                                    Logout
+                                </Button>
+                            </>
+                        ) : (
+                            <Button size="sm" asChild className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 border-0">
+                                <a href="http://localhost:3000/user/login" target="_blank" rel="noreferrer">
+                                    Access to Gitea
+                                </a>
+                            </Button>
+                        )}
                     </nav>
                 </div>
             </div>

@@ -11,7 +11,7 @@ import models
 from database import SessionLocal, engine, get_db
 
 # Routers
-from routers import issues, comments, repositories
+from routers import issues, comments, repositories, fault_tolerance, auth
 
 # Create tables (if they don't exist)
 models.Base.metadata.create_all(bind=engine)
@@ -41,6 +41,40 @@ Instrumentator().instrument(app).expose(app)
 app.include_router(issues.router)
 app.include_router(comments.router)
 app.include_router(repositories.router)
+app.include_router(fault_tolerance.router)
+app.include_router(auth.router)
+
+# --- ROOT ENDPOINTS ---
+@app.get("/")
+def root():
+    """Root endpoint with API information."""
+    return {
+        "name": "GitForge Backend API",
+        "version": "1.0.0",
+        "description": "Distributed System Research Platform",
+        "docs": "/docs",
+        "endpoints": {
+            "health": "/api/health",
+            "repositories": "/api/repositories",
+            "issues": "/api/issues",
+            "fault_tolerance": "/api/fault-tolerance",
+            "metrics": "/metrics",
+            "auth": "/api/auth/login"
+        }
+    }
+
+@app.get("/api")
+def api_root():
+    """API root with available endpoints."""
+    return {
+        "available_endpoints": [
+            "/api/health",
+            "/api/repositories",
+            "/api/issues",
+            "/api/fault-tolerance",
+            "/api/auth"
+        ]
+    }
 
 # --- CRITICAL ENDPOINT FOR EXPERIMENTS ---
 @app.get("/api/health") # Keeping /api/health to match frontend expectations

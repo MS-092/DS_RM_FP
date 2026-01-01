@@ -1,6 +1,8 @@
-# GitForge: Distributed Repository System
+# GitForge: Distributed System Resilience Research Platform
 
-GitForge is a distributed version control platform designed to decouple the Git engine from metadata storage, eliminating Single Points of Failure (SPOF). This project serves as both a robust Git hosting solution and a research testbed for distributed system experiments.
+GitForge is a specialized distributed system architecture designed to serve as a rigorous testbed for empirical fault tolerance research. Operating within a Kubernetes-orchestrated microservices environment, it provides a controlled setting to strictly evaluate and compare **Checkpointing**, **Replication**, and **Hybrid** recovery strategies.
+
+Beyond its role as a functional Git hosting service (similar to GitHub/Gitea), its primary engineering purpose is to facilitate the quantitative analysis of **Recovery Time Objective (RTO)** and **Data Integrity** under induced chaotic failure conditions.
 
 ## 🚀 Recent Improvements
 
@@ -11,7 +13,7 @@ GitForge is a distributed version control platform designed to decouple the Git 
 - ✅ **CORS Support**: Proper cross-origin configuration
 - ✅ **API Documentation**: Interactive Swagger docs at `/docs`
 
-See [IMPROVEMENTS.md](./IMPROVEMENTS.md) for detailed changes.
+See [IMPROVEMENTS.md](./docs/IMPROVEMENTS.md) for detailed changes.
 
 ## 📁 Project Structure
 
@@ -21,7 +23,7 @@ See [IMPROVEMENTS.md](./IMPROVEMENTS.md) for detailed changes.
 
 ## 🏃 Quick Start
 
-See [QUICKSTART.md](./QUICKSTART.md) for detailed instructions.
+See [QUICKSTART.md](./docs/QUICKSTART.md) for detailed instructions.
 
 ### TL;DR
 
@@ -69,13 +71,16 @@ Then visit:
 - 🌪️ **Chaos Engineering**: Chaos Mesh experiments for fault injection
 - 📊 **Monitoring**: Grafana dashboard configurations
 
-## 🧪 Research Goals
+## 🧪 Research Objectives
 
-This system is used to measure:
-- **Recovery Time** under different checkpointing intervals
-- **Availability** during node failures
-- **Replication Lag** under various load conditions
-- **Failover Performance** in distributed scenarios
+The platform is instrumented to conduct specific empirical studies:
+
+1.  **Fault Tolerance efficacy**: Comparative analysis of Baseline, Checkpointing, Replication, and Hybrid strategies.
+2.  **Recovery Performance**: Millisecond-precision measurement of Recovery Time Objective (RTO) following catastrophic pod failure.
+3.  **Data Durability**: Quantitative assessment of data loss (RPO) during sudden termination events.
+4.  **Overhead Analysis**: Evaluation of the operational cost (latency, resource usage) associated with each resilience strategy.
+
+See [RESEARCH_PROTOCOL.md](./docs/RESEARCH_PROTOCOL.md) for the detailed experimental methodology.
 
 ## 📚 API Endpoints
 
@@ -121,12 +126,12 @@ Full API documentation available at `http://localhost:8000/docs` when running.
 
 ### Quick Links
 - **[User Guide](./docs/USER_GUIDE.md)** - Complete guide on using GitForge
-- **[Quick Start](./QUICKSTART.md)** - Get up and running in 5 minutes
+- **[Quick Start](./docs/QUICKSTART.md)** - Get up and running in 5 minutes
 - **[API Reference](./docs/API_REFERENCE.md)** - Complete API documentation
 - **[Deployment Guide](./docs/DEPLOYMENT.md)** - Production deployment instructions
 - **[Testing Guide](./docs/TESTING.md)** - Testing strategies and examples
 - **[Architecture](./docs/ARCHITECTURE.md)** - System architecture and design
-- **[Improvements Log](./IMPROVEMENTS.md)** - Recent improvements and changes
+- **[Improvements Log](./docs/IMPROVEMENTS.md)** - Latest improvements and changes
 
 ### For Developers
 - **[Testing Guide](./docs/TESTING.md)** - How to run and write tests
@@ -162,7 +167,7 @@ See [Testing Guide](./docs/TESTING.md) for details.
 ## 🚀 Deployment
 
 ### Local Development
-See [QUICKSTART.md](./QUICKSTART.md)
+See [QUICKSTART.md](./docs/QUICKSTART.md)
 
 ### Production Deployment
 See [Deployment Guide](./docs/DEPLOYMENT.md) for:
@@ -189,22 +194,22 @@ This is a research project. Contributions are welcome! Areas for improvement:
 
 See [Testing Guide](./docs/TESTING.md) for testing requirements.
 
-## 📝 License
-
-This project is for educational and research purposes.
-
-## 📞 Support
+## Support
 
 - **Documentation**: Check the [docs](./docs/) directory
 - **Issues**: Create an issue in the repository
 - **API Docs**: http://localhost:8000/docs (when running)
 
-## 🎯 Project Status
+## License
+
+- This project is for educational and research purposes.
+
+## Project Status
 
 - ✅ Core functionality complete
 - ✅ Full documentation
 - ✅ Testing infrastructure
 - ✅ CI/CD pipeline
 - ✅ Production-ready
-- 🔄 Authentication (in progress)
+- 🔄 Authentication (planned) / Currently navigated to Gitea authentication page
 - 🔄 Advanced features (planned)

@@ -230,45 +230,64 @@ CREATE TABLE comments (
 (Separate flow for readiness probe)
 ```
 
-## Fault Tolerance
+## Fault Tolerance Architecture
 
-### Database Failures
+GitForge implements a dual-layer fault tolerance architecture:
+1.  **Infrastructure Layer**: Kubernetes-native mechanisms (for production reliability).
+2.  **Application Research Layer**: Explicit algorithms implemented in Python (for empirical study).
 
-**Scenario**: One CockroachDB node fails
+### 1. Infrastructure Layer (Production)
 
-**Behavior**:
-1. Raft consensus detects failure
-2. Remaining nodes elect new leader
-3. Data remains available (RF=3)
-4. Queries continue without interruption
-5. Failed node can rejoin when recovered
+This layer ensures the base platform remains operational.
 
-**Recovery Time**: < 5 seconds
+*   **Database (CockroachDB)**: Uses Raft consensus. Configured with `replicas: 3`. Tolerates 1 node failure without data loss (RF=3).
+*   **Git Storage (Gitea)**: Uses `StatefulSet` with Persistent Volume Claims (PVC). Data survives pod restarts.
+*   **API Gateway (Backend)**: Stateless. Kubernetes `Deployment` ensures `replicas: 1+` are always running.
 
-### Backend Failures
+### 2. Application Research Layer (Experimental)
 
-**Scenario**: One backend pod crashes
+This layer is the core of the research project (`backend/fault_tolerance/`). It implements the "Strategy Pattern" to dynamically switch recovery mechanisms at runtime.
 
-**Behavior**:
-1. Kubernetes detects pod failure
-2. Load balancer removes pod from rotation
-3. Requests route to healthy pods
-4. Kubernetes restarts failed pod
-5. Pod rejoins when health checks pass
+#### Class Structure
+*   **`FaultToleranceManager`**: Singleton coordinator. Handles strategy switching and metrics collection.
+*   **`BaseFaultToleranceStrategy` (Interface)**: Defines `store()`, `retrieve()`, `recover()`.
+*   **Strategies**:
+    *   **Baseline (`BaselineStrategy`)**:
+        *   *Mechanism*: In-memory dictionary.
+        *   *Failure*: `dict.clear()`.
+        *   *Recovery*: Re-initialization (empty).
+    *   **Checkpointing (`CheckpointingStrategy`)**:
+        *   *Mechanism*: Asynchronous background thread writes to disk (JSON/Pickle).
+        *   *Recovery*: Load latest valid snapshot + replay Write-Ahead-Log (WAL).
+    *   **Replication (`ReplicationStrategy`)**:
+        *   *Mechanism*: Active in-memory replication to virtual "nodes" (Python objects).
+        *   *Recovery*: Failover to healthy virtual replica.
+    *   **Hybrid (`HybridStrategy`)**:
+        *   *Mechanism*: Combined replication (for speed) and checkpointing (for catastrophe).
 
-**Recovery Time**: 10-30 seconds
+#### Data Flow (Research Mode)
 
-### Frontend Failures
+```
+1. Client POST /api/fault-tolerance/store
+   ↓
+2. Manager delegates to Active Strategy (e.g., Replication)
+   ↓
+3. Strategy writes to Virtual Node A AND Virtual Node B
+   ↓
+4. Acknowledge Write (200 OK)
+   ↓
+[External Trigger: Chaos Mesh Kills Pod]
+   ↓
+5. System Restarts
+   ↓
+6. Manager initializes
+   ↓
+7. Client POST /api/fault-tolerance/recover
+   ↓
+8. Strategy executes specific recovery logic (e.g., Load from Disk)
+```
 
-**Scenario**: Frontend pod crashes
-
-**Behavior**:
-1. Nginx/Load balancer detects failure
-2. Requests route to healthy pods
-3. Kubernetes restarts pod
-4. Static files served from healthy pods
-
-**Recovery Time**: < 10 seconds
+**Recovery Time Objective (RTO)** is measured from step 7 start to finish.
 
 ## Security
 
@@ -310,15 +329,33 @@ CREATE TABLE comments (
 - **Secrets management**: Kubernetes secrets
 - **Network policies**: Restrict pod-to-pod communication
 
-### Authentication & Authorization
+### Authentication & Authorization (Implemented)
 
-*Note: Not yet implemented*
+The system checks permissions against Gitea's API but manages session state independently via stateless JWTs.
 
-Future implementation:
-- JWT tokens for API authentication
-- OAuth2 for third-party integrations
-- RBAC for fine-grained permissions
-- API keys for programmatic access
+1.  **The "Proxy" Pattern (Security)**:
+    *   **Principle**: GitForge never stores user passwords.
+    *   **Mechanism**: On login, credentials are exchanged with Gitea for an Access Token. This token is encrypted and embedded in the GitForge JWT.
+    *   **Benefit**: Minimizes attack surface. If GitForge DB is leaked, no credentials are compromised.
+
+2.  **Consistency Strategy**:
+    *   **Question**: "How do we ensure that if Gitea is down, GitForge handles the error gracefully?"
+    *   **Answer**: Circuit Breaker pattern. If Gitea API returns 503, GitForge degrades functionality (e.g., Read-Only mode for metadata) but keeps the Issue Tracker (CockroachDB) online.
+    *   **Sync**: Updates are always performed via Gitea REST API (`PUT /api/v1/...`), ensuring hooks and internal consistency are maintained by the source of truth.
+
+3.  **Privilege Separation (RBAC)**:
+    *   **Policy**:
+        *   **Private Repos**: Strict Ownership. Only the repo owner can Read/Write.
+        *   **Public Repos**: World Readable. Only Owner can Write/Delete.
+    *   **Implementation**: Logic resides in `backend/dependencies.py` layer, enforcing checks *before* proxying requests.
+
+4.  **Webhooks (Reverse Sync)**:
+    *   *Optional Design*: To ensure Gitea -> GitForge consistency (e.g., user pushes code via CLI), a Webhook Listener (`POST /api/webhooks`) consumes Gitea push events to update GitForge's metadata cache if needed.
+
+### Tech Stack
+*   **Backend**: Python (FastAPI) for high-performance async I/O.
+*   **Auth**: PyJWT for stateless session management.
+*   **Integration**: `httpx` for async non-blocking calls to Gitea.
 
 ## Observability
 
